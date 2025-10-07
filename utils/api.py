@@ -47,9 +47,6 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
         # incrementa Numero da pagina
         pagina+=1
 
-        except requests.exceptions.RequestException as e:
-            print(f"Erro na requisição: {e}")
-            break
 
     return  resultado
 
@@ -63,7 +60,7 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
     reraise=True
 )
 def buscar_dados(base_url, params={}):
-    
+
     #Executa Requisição
     resposta = requests.get(base_url, params=params, timeout=30)  
 
