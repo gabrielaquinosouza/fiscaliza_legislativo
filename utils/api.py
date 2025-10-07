@@ -18,11 +18,10 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
     retry=retry_if_exception_type((requests.exceptions.RequestException,)),
     reraise=True
 )
-def buscar_dados(base_url, params={}):
+def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
 
     resultado = []
     pagina = 1
-    itensporPagina = 1000
 
     while True:
         
@@ -55,4 +54,30 @@ def buscar_dados(base_url, params={}):
             break
 
     return  resultado
+
+    
+    
+#Função para bsucar dados de endpoints sem paginaçao
+@retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=2, max=30),
+    retry=retry_if_exception_type((requests.exceptions.RequestException,)),
+    reraise=True
+)
+def buscar_dados(base_url, params={}):
+    try:
+        #Executa Requisição
+        resposta = requests.get(base_url, params=params, timeout=30)  
+
+        #Lança exceção para códigos de erro HTTP
+        resposta.raise_for_status()
+    
+        resultado = resposta.json()
+
+    except requests.exceptions.RequestException as e:
+        print(f"Erro na requisição: {e}")
+        break
+
+    return  resultado
+
     
