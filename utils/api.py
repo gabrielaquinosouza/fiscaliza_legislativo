@@ -29,25 +29,23 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
         params['pagina'] = pagina 
         params['itens'] = itensporPagina
 
-        try:
+        #Executa Requisição
+        resposta = requests.get(base_url, params=params, timeout=30)  
 
-            #Executa Requisição
-            resposta = requests.get(base_url, params=params, timeout=30)  
-
-            #Lança exceção para códigos de erro HTTP
-            resposta.raise_for_status()
+        #Lança exceção para códigos de erro HTTP
+        resposta.raise_for_status()
     
-            saida = resposta.json()
+        saida = resposta.json()
             
-            # Adiciona resultado da pagina a lista de resultados
-            resultado.extend(saida['dados'])
+        # Adiciona resultado da pagina a lista de resultados
+        resultado.extend(saida['dados'])
 
-            #verifica se há mais paginas
-            if len(saida['dados']) < itensporPagina:
-                break
+        #verifica se há mais paginas
+        if len(saida['dados']) < itensporPagina:
+            break
             
-            # incrementa Numero da pagina
-            pagina+=1
+        # incrementa Numero da pagina
+        pagina+=1
 
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição: {e}")
@@ -55,7 +53,7 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
 
     return  resultado
 
-    
+
     
 #Função para bsucar dados de endpoints sem paginaçao
 @retry(
@@ -65,18 +63,14 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
     reraise=True
 )
 def buscar_dados(base_url, params={}):
-    try:
-        #Executa Requisição
-        resposta = requests.get(base_url, params=params, timeout=30)  
-
-        #Lança exceção para códigos de erro HTTP
-        resposta.raise_for_status()
     
-        resultado = resposta.json()
+    #Executa Requisição
+    resposta = requests.get(base_url, params=params, timeout=30)  
 
-    except requests.exceptions.RequestException as e:
-        print(f"Erro na requisição: {e}")
-        break
+    #Lança exceção para códigos de erro HTTP
+    resposta.raise_for_status()
+    
+    resultado = resposta.json()
 
     return  resultado
 
