@@ -29,13 +29,12 @@ def buscar_dados_paginado(base_url, params={}, itensporPagina=100):
         params['pagina'] = pagina 
         params['itens'] = itensporPagina
 
-        #Executa Requisição
-        resposta = requests.get(base_url, params=params, timeout=30)  
-
-        #Lança exceção para códigos de erro HTTP
-        resposta.raise_for_status()
-    
-        saida = resposta.json()
+        try:
+            #Faz a requisição na api
+            saida = buscar_dados(base_url, params)
+        except requests.exceptions.RequestException as e:
+            print(f"Falha ao buscar página {pagina}: {e}")
+            break  
             
         # Adiciona resultado da pagina a lista de resultados
         resultado.extend(saida['dados'])
